@@ -235,13 +235,28 @@ class OrdemServicoController extends Controller
     {
         $this->autorizarAcesso($request, $os);
 
-        // Ficha de atendimento obrigatória — requisito obrigatório da planilha.
-        $ficha = $request->validate([
-            'tipo_intervencao' => ['required', 'string', 'max:255'],
-            'resolucao'        => ['required', 'string'],
-            'contato_local'    => ['required', 'string', 'max:255'],
-            'ficha_obs'        => ['nullable', 'string'],
-        ]);
+        // RF12: a ficha precisa ter sido salva ANTES da conclusão.
+        if (empty($os->tipo_intervencao) || empty($os->resolucao) || empty($os->contato_local)) {
+            return back()->with('flash', [
+                'tipo' => 'erro',
+                'msg'  => 'Preencha e salve a ficha de atendimento antes de concluir.',
+            ]);
+        }
+
+        // Apenas o facilitador responsável conclui (gestor acompanha).
+        if (! $request->user()->ehFacilitador() || (int) $os->profissional_id !== (int) $request->user()->id) {
+            return back()->with('flash', [
+                'tipo' => 'erro',
+                'msg'  => 'Somente o facilitador responsável pode concluir a OS.',
+            ]);
+        }
+
+        $ficha = [
+            'tipo_intervencao' => $os->tipo_intervencao,
+            'resolucao'        => $os->resolucao,
+            'contato_local'    => $os->contato_local,
+            'ficha_obs'        => $os->ficha_obs,
+        ];
 
         try {
             $os->concluir($ficha);
@@ -252,6 +267,36 @@ class OrdemServicoController extends Controller
         return redirect("/os/{$os->id}")->with('flash', [
             'tipo' => 'sucesso',
             'msg'  => 'Atendimento concluído com sucesso.',
+        ]);
+    }
+
+    /**
+     * RF12: salva a ficha de execução sem concluir a OS.
+     * O botão "Concluir" só aparece depois que esta ficha estiver salva.
+     */
+    public function salvarFicha(Request $request, OrdemServico $os)
+    {
+        $this->autorizarAcesso($request, $os);
+
+        if ($os->status !== 'iniciado') {
+            return back()->with('flash', [
+                'tipo' => 'erro',
+                'msg'  => 'A ficha só pode ser preenchida com a OS em andamento.',
+            ]);
+        }
+
+        $ficha = $request->validate([
+            'tipo_intervencao' => ['required', 'string', 'max:255'],
+            'resolucao'        => ['required', 'string'],
+            'contato_local'    => ['required', 'string', 'max:255'],
+            'ficha_obs'        => ['nullable', 'string'],
+        ]);
+
+        $os->update($ficha);
+
+        return redirect("/os/{$os->id}")->with('flash', [
+            'tipo' => 'sucesso',
+            'msg'  => 'Ficha salva. Você já pode concluir o atendimento.',
         ]);
     }
 

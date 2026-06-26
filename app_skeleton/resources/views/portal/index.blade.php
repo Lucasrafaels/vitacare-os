@@ -8,11 +8,14 @@
     <style>
         *{box-sizing:border-box;margin:0;padding:0}
         body{font-family:'Inter',sans-serif;background:#f8fafc;color:#1e293b}
-        header{background:linear-gradient(135deg,#0f766e,#1e293b);padding:20px 40px;display:flex;align-items:center;justify-content:space-between}
+        header{background:linear-gradient(135deg,#0f766e,#1e293b);padding:18px 40px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:0 2px 8px rgba(15,118,110,.18)}
         .logo{color:#fff;font-size:20px;font-weight:700}
         .logo em{color:#5eead4;font-style:normal}
-        .header-link{background:rgba(255,255,255,.15);color:#fff;padding:7px 16px;border-radius:8px;font-size:13.5px;font-weight:500;text-decoration:none;transition:background .15s}
-        .header-link:hover{background:rgba(255,255,255,.25)}
+        .header-nav{display:flex;align-items:center;gap:22px}
+        .header-nav a.nav-link{color:rgba(255,255,255,.85);font-size:13.5px;font-weight:500;text-decoration:none}
+        .header-nav a.nav-link:hover{color:#5eead4}
+        .header-link{background:#5eead4;color:#0f3a36;padding:10px 20px;border-radius:8px;font-size:14px;font-weight:700;text-decoration:none;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 14px rgba(94,234,212,.35)}
+        .header-link:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(94,234,212,.5)}
         .hero{background:linear-gradient(135deg,#0f766e,#1e293b);padding:60px 40px;text-align:center;color:#fff}
         .hero h1{font-size:36px;font-weight:700;letter-spacing:-.5px;margin-bottom:12px}
         .hero h1 em{color:#5eead4;font-style:normal}
@@ -39,18 +42,57 @@
         .feature h3{font-size:14px;font-weight:600;color:#1e293b;margin-bottom:6px}
         .feature p{font-size:13px;color:#64748b}
         .feature-icon{width:36px;height:36px;border-radius:8px;background:#f0fdfa;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+        /* Como funciona */
+        .section{padding:60px 40px;background:#fff}
+        .section.alt{background:#f1f5f9}
+        .section-wrap{max-width:1040px;margin:0 auto}
+        .section h2{font-size:26px;font-weight:700;color:#0f172a;text-align:center;margin-bottom:8px;letter-spacing:-.3px}
+        .section .lead{text-align:center;color:#64748b;font-size:14.5px;margin-bottom:40px;max-width:560px;margin-left:auto;margin-right:auto}
+        .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+        .step{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:26px;position:relative;box-shadow:0 4px 14px rgba(15,23,42,.04)}
+        .step-num{position:absolute;top:-14px;left:22px;width:32px;height:32px;border-radius:50%;background:#0d9488;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;box-shadow:0 4px 10px rgba(13,148,136,.35)}
+        .step h3{font-size:15px;font-weight:700;color:#0f172a;margin:8px 0 8px}
+        .step p{font-size:13.5px;color:#475569;line-height:1.55}
+        .step .who{display:inline-block;margin-top:12px;font-size:11.5px;font-weight:600;color:#0f766e;background:#ccfbf1;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.04em}
+        /* Depoimentos */
+        .testimonials{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}
+        .quote{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:24px;box-shadow:0 4px 14px rgba(15,23,42,.04);display:flex;flex-direction:column}
+        .quote .mark{color:#5eead4;font-size:42px;font-family:Georgia,serif;line-height:1;margin-bottom:-6px}
+        .quote p{font-size:14px;color:#334155;line-height:1.6;font-style:italic;flex:1}
+        .quote .author{display:flex;align-items:center;gap:12px;margin-top:18px;padding-top:16px;border-top:1px solid #f1f5f9}
+        .avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#0d9488,#0f766e);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0}
+        .author-info strong{display:block;font-size:13.5px;color:#0f172a;font-weight:600}
+        .author-info span{display:block;font-size:12px;color:#64748b;margin-top:1px}
+        .cta-final{background:linear-gradient(135deg,#0f766e,#1e293b);padding:50px 40px;text-align:center;color:#fff}
+        .cta-final h2{color:#fff;font-size:24px;margin-bottom:10px}
+        .cta-final p{opacity:.85;margin-bottom:22px;font-size:14.5px}
+        .cta-btn{display:inline-block;background:#5eead4;color:#0f3a36;padding:13px 28px;border-radius:8px;font-size:15px;font-weight:700;text-decoration:none;box-shadow:0 6px 18px rgba(94,234,212,.4);transition:transform .15s}
+        .cta-btn:hover{transform:translateY(-2px)}
+        @media (max-width:760px){
+            header{padding:14px 18px}
+            .header-nav{gap:10px}
+            .header-nav a.nav-link{display:none}
+            .hero{padding:44px 20px}
+            .hero h1{font-size:26px}
+            .section{padding:40px 18px}
+            .steps,.testimonials,.features{grid-template-columns:1fr}
+        }
         footer{text-align:center;padding:24px;color:#94a3b8;font-size:12px;border-top:1px solid #e2e8f0;background:#fff;margin-top:40px}
     </style>
 </head>
 <body>
 <header>
     <div class="logo">Vita<em>Care</em> OS</div>
-    <a href="/login" class="header-link">Entrar no sistema →</a>
+    <nav class="header-nav">
+        <a href="#como-funciona" class="nav-link">Como funciona</a>
+        <a href="#depoimentos" class="nav-link">Depoimentos</a>
+        <a href="/login" class="header-link">Acessar Sistema →</a>
+    </nav>
 </header>
 
 <div class="hero">
-    <h1>Gestão de <em>Ordens de Serviço</em></h1>
-    <p>Acompanhe visitas e atendimentos das unidades de saúde em tempo real.</p>
+    <h1>Gestão de <em>Ordens de Serviço</em> da Atenção Primária</h1>
+    <p>Plataforma que conecta gestores e facilitadores das unidades de saúde para planejar, executar e auditar visitas, ações educativas e atendimentos &mdash; com rastreabilidade ponta a ponta.</p>
 
     <form method="GET" action="/pesquisa" class="search-bar">
         <input type="text" name="q" placeholder="Busque por código da OS, unidade ou profissional…"
@@ -107,6 +149,96 @@
     </div>
     @endif
 </div>
+
+@if (!isset($visitas) || !count($visitas))
+{{-- Seção "Como funciona" --}}
+<section class="section" id="como-funciona">
+    <div class="section-wrap">
+        <h2>Como funciona</h2>
+        <p class="lead">Três passos simples que organizam todo o ciclo de uma visita técnica nas UBSs.</p>
+        <div class="steps">
+            <div class="step">
+                <div class="step-num">1</div>
+                <h3>Gestor cria a OS</h3>
+                <p>Define profissional responsável, unidade, atividade, data e observações da visita. Tudo em um único formulário, com validações que evitam retrabalho.</p>
+                <span class="who">Gestor</span>
+            </div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <h3>Facilitador executa</h3>
+                <p>No próprio celular ou desktop, inicia o atendimento, preenche a ficha de execução (tipo, resolução, contato) e finaliza &mdash; ou registra o motivo da não execução.</p>
+                <span class="who">Facilitador</span>
+            </div>
+            <div class="step">
+                <div class="step-num">3</div>
+                <h3>Gestor acompanha</h3>
+                <p>Dashboard, filtros e relatórios mostram o que foi feito, por quem e quanto tempo levou. PDF da OS pronto para auditoria a qualquer momento.</p>
+                <span class="who">Gestor</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+{{-- Depoimentos baseados nas entrevistas --}}
+<section class="section alt" id="depoimentos">
+    <div class="section-wrap">
+        <h2>O que dizem quem usa</h2>
+        <p class="lead">Depoimentos inspirados nas entrevistas com gestores e facilitadores da rede de atenção primária.</p>
+        <div class="testimonials">
+            <div class="quote">
+                <div class="mark">&ldquo;</div>
+                <p>Antes eu perdia metade do dia ligando para saber se a equipe tinha conseguido entrar na casa do paciente. Agora abro o sistema, vejo o status de cada visita e já sei onde precisamos reforçar.</p>
+                <div class="author">
+                    <div class="avatar">CA</div>
+                    <div class="author-info">
+                        <strong>Carlos Andrade</strong>
+                        <span>Coordenador da Atenção Primária</span>
+                    </div>
+                </div>
+            </div>
+            <div class="quote">
+                <div class="mark">&ldquo;</div>
+                <p>O relatório de tempo médio por unidade mudou nossa conversa com a secretaria. Saímos do "acho que está demorando" para um dado concreto que ajuda a redistribuir as equipes.</p>
+                <div class="author">
+                    <div class="avatar">RM</div>
+                    <div class="author-info">
+                        <strong>Renata Moura</strong>
+                        <span>Gestora de Unidade de Saúde</span>
+                    </div>
+                </div>
+            </div>
+            <div class="quote">
+                <div class="mark">&ldquo;</div>
+                <p>O que eu mais gosto é a ficha de execução. Preencho na hora, com o paciente ainda na minha frente, e quando volto pra UBS já está tudo registrado &mdash; sem papel, sem caderno, sem retrabalho.</p>
+                <div class="author">
+                    <div class="avatar">CR</div>
+                    <div class="author-info">
+                        <strong>Cleide Ramos</strong>
+                        <span>Agente Comunitária de Saúde</span>
+                    </div>
+                </div>
+            </div>
+            <div class="quote">
+                <div class="mark">&ldquo;</div>
+                <p>Quando uma visita não dá pra ser feita, o sistema obriga a registrar o motivo. Isso é ouro pra auditoria e me protege também: fica claro que o problema não foi a equipe.</p>
+                <div class="author">
+                    <div class="avatar">AS</div>
+                    <div class="author-info">
+                        <strong>Adriano Souza</strong>
+                        <span>Facilitador / Enfermeiro</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta-final">
+    <h2>Pronto para organizar as visitas da sua equipe?</h2>
+    <p>Acesse a plataforma com o seu perfil de gestor ou facilitador.</p>
+    <a href="/login" class="cta-btn">Acessar Sistema →</a>
+</section>
+@endif
 
 <footer>VitaCare OS · Sistema de Gestão de Ordens de Serviço · {{ date('Y') }}</footer>
 </body>

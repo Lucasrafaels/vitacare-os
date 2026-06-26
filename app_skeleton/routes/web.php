@@ -38,6 +38,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/os/{os}/duplicar', [OrdemServicoController::class, 'duplicar']);
     Route::post('/os/{os}/iniciar', [OrdemServicoController::class, 'iniciar']);
     Route::post('/os/{os}/concluir', [OrdemServicoController::class, 'concluir']);
+    Route::post('/os/{os}/ficha', [OrdemServicoController::class, 'salvarFicha']);
     Route::post('/os/{os}/nao-executar', [OrdemServicoController::class, 'naoExecutar']);
     Route::get('/os/{os}/pdf', [OrdemServicoController::class, 'pdf']);
 

@@ -1,5 +1,23 @@
 # Melhorias aplicadas nesta revisão (vitacare_final)
 
+## v4 — Ajustes finais (RF12, RF22, RF23 + Landing institucional)
+
+- **RF12 — Botão "Concluir" condicional:** nova rota `POST /os/{id}/ficha`
+  (método `salvarFicha`) salva a ficha de execução sem alterar o status.
+  O botão "Concluir atendimento" só é renderizado em `os/show.blade.php`
+  quando `tipo_intervencao`, `resolucao` e `contato_local` estão
+  preenchidos. Gestor não vê mais o botão "Concluir" (apenas o
+  facilitador responsável); rota também bloqueia a tentativa via backend.
+- **RF23 — Coluna `senha`:** decisão registrada no `README.md` (Opção B:
+  mantém `senha` + `getAuthPassword()`).
+- **Landing page institucional:** seção "Como funciona" (3 passos
+  Gestor → Facilitador → Gestor), 4 depoimentos baseados nas entrevistas
+  (Carlos, Renata, Cleide, Adriano), CTA "Acessar Sistema" reforçado no
+  topo (sticky) e ao final, navegação interna por âncoras, layout
+  responsivo (`@media max-width: 760px`).
+
+---
+
 Base: `vitacare_completo`. Esta versão lapida o código mantendo 100% dos
 requisitos da planilha de avaliação e corrige bugs reais.
 

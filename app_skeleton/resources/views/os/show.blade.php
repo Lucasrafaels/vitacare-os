@@ -15,6 +15,10 @@
     $u            = auth()->user();
     $minhaOs      = (int) $os['profissional_id'] === (int) $u->id;
     $ehGestor     = $u->ehGestor();
+    $ehFacilitador = $u->ehFacilitador();
+    $fichaPreenchida = !empty($os['tipo_intervencao'])
+                    && !empty($os['resolucao'])
+                    && !empty($os['contato_local']);
 @endphp
 <div class="topbar">
     <a href="/os" style="color:#64748b;font-size:13px">← Ordens de Serviço</a>
@@ -155,11 +159,26 @@
                     </form>
                     @endif
 
-                    @if ($podeConcluir && ($minhaOs || $ehGestor))
-                    <button type="button" class="btn btn-primary" style="width:100%;background:#16a34a"
-                            onclick="document.getElementById('modal-concluir').style.display='flex'">
-                        ✓ Concluir atendimento
+                    {{-- RF12: facilitador preenche a ficha antes; só então aparece "Concluir". Gestor não conclui. --}}
+                    @if ($podeConcluir && $minhaOs && $ehFacilitador)
+                    <button type="button" class="btn btn-outline" style="width:100%"
+                            onclick="document.getElementById('modal-ficha').style.display='flex'">
+                        📝 {{ $fichaPreenchida ? 'Editar ficha de execução' : 'Preencher ficha de execução' }}
                     </button>
+                        @if ($fichaPreenchida)
+                        <form method="POST" action="/os/{{ $os['id'] }}/concluir" onsubmit="return confirm('Concluir este atendimento com a ficha salva?')">
+                            @csrf
+                            <button type="submit" class="btn btn-primary" style="width:100%;background:#16a34a">✓ Concluir atendimento</button>
+                        </form>
+                        @else
+                        <div style="font-size:12px;color:#92400e;background:#fef3c7;padding:8px 10px;border-radius:6px;text-align:center">
+                            Preencha e salve a ficha de execução para liberar a conclusão.
+                        </div>
+                        @endif
+                    @elseif ($podeConcluir && $ehGestor)
+                        <div style="font-size:12px;color:#64748b;text-align:center;padding:4px 0">
+                            Aguardando facilitador {{ $fichaPreenchida ? 'concluir' : 'preencher a ficha' }}.
+                        </div>
                     @endif
 
                     @if ($podeNaoExec && ($minhaOs || $ehGestor))
@@ -180,11 +199,12 @@
     </div>
 </div>
 
-<!-- Modal: Concluir -->
-<div id="modal-concluir" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:20px">
+<!-- Modal: Ficha de Execução (RF12 — salva sem concluir) -->
+<div id="modal-ficha" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:20px">
     <div style="background:#fff;border-radius:12px;padding:28px;width:100%;max-width:520px;box-shadow:0 25px 50px rgba(0,0,0,.25)">
-        <h3 style="margin-bottom:18px;font-size:16px">Ficha de Atendimento</h3>
-        <form method="POST" action="/os/{{ $os['id'] }}/concluir">
+        <h3 style="margin-bottom:6px;font-size:16px">Ficha de Atendimento</h3>
+        <p style="margin-bottom:18px;font-size:12.5px;color:#64748b">Salve a ficha primeiro. O botão "Concluir" só será liberado depois.</p>
+        <form method="POST" action="/os/{{ $os['id'] }}/ficha">
             @csrf
             <div class="form-group" style="margin-bottom:12px">
                 <label>Tipo de Intervenção <span class="req">*</span></label>
@@ -203,8 +223,8 @@
                 <textarea name="ficha_obs" rows="2" placeholder="Informações adicionais…">{{ $os['ficha_obs'] ?? '' }}</textarea>
             </div>
             <div class="flex gap-2 justify-between">
-                <button type="button" class="btn btn-outline" onclick="document.getElementById('modal-concluir').style.display='none'">Cancelar</button>
-                <button type="submit" class="btn btn-primary" style="background:#16a34a">✓ Confirmar conclusão</button>
+                <button type="button" class="btn btn-outline" onclick="document.getElementById('modal-ficha').style.display='none'">Cancelar</button>
+                <button type="submit" class="btn btn-primary">💾 Salvar ficha</button>
             </div>
         </form>
     </div>
