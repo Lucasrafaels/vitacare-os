@@ -109,11 +109,13 @@
     <span>Gerado em {{ date('d/m/Y H:i') }}</span>
 </div>
 
+@if (empty($pdfMode))
 <div class="no-print" style="text-align:center;margin-top:24px">
     <button onclick="window.print()" style="padding:10px 24px;background:#0d9488;color:#fff;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-family:inherit">
-        🖨️ Imprimir / Salvar PDF
+        Imprimir / Salvar PDF
     </button>
-    <a href="javascript:history.back()" style="margin-left:12px;font-size:13px;color:#0d9488">← Voltar</a>
+    <a href="javascript:history.back()" style="margin-left:12px;font-size:13px;color:#0d9488">&laquo; Voltar</a>
 </div>
+@endif
 </body>
 </html>

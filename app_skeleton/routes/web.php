@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AtividadeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrdemServicoController;
 use App\Http\Controllers\PortalController;
@@ -60,6 +61,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/unidades/{uni}/editar', [UnidadeController::class, 'editarForm']);
         Route::post('/unidades/{uni}/editar', [UnidadeController::class, 'editar']);
         Route::post('/unidades/{uni}/excluir', [UnidadeController::class, 'excluir']);
+
+        Route::get('/atividades', [AtividadeController::class, 'index']);
+        Route::get('/atividades/nova', [AtividadeController::class, 'nova']);
+        Route::post('/atividades/nova', [AtividadeController::class, 'criar']);
+        Route::get('/atividades/{atv}', [AtividadeController::class, 'show']);
+        Route::get('/atividades/{atv}/editar', [AtividadeController::class, 'editarForm']);
+        Route::post('/atividades/{atv}/editar', [AtividadeController::class, 'editar']);
+        Route::post('/atividades/{atv}/excluir', [AtividadeController::class, 'excluir']);
 
         Route::get('/relatorios/os-profissional', [RelatorioController::class, 'porProfissional']);
         Route::get('/relatorios/tempo-medio', [RelatorioController::class, 'tempoMedio']);

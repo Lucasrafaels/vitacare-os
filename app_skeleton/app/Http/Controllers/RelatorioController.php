@@ -61,7 +61,9 @@ class RelatorioController extends Controller
         $porUnidade = $concluidas->groupBy(fn (OrdemServico $os) => $os->unidade->nome)
             ->map(function ($grupo, $nomeUnidade) {
                 $minutos = $grupo->map(function (OrdemServico $os) {
-                    return Carbon::parse($os->concluido_em)->diffInMinutes(Carbon::parse($os->iniciado_em));
+                    // abs() porque o Carbon 3 retorna diff sinalizada por padrão.
+                    return abs(Carbon::parse($os->concluido_em)
+                        ->diffInMinutes(Carbon::parse($os->iniciado_em)));
                 });
 
                 return [

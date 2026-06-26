@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class OrdemServico extends Model
 {
@@ -48,18 +49,26 @@ class OrdemServico extends Model
 
     public static function gerarCodigo(): string
     {
+        // Geração segura contra concorrência: faz lock pessimista
+        // e busca o maior número sequencial já gravado para o ano.
         $ano = now()->year;
-        $ultimo = static::where('codigo', 'like', "OS-{$ano}-%")
-            ->orderByDesc('id')
-            ->first();
 
-        $seq = 1;
-        if ($ultimo) {
-            $partes = explode('-', $ultimo->codigo);
-            $seq = ((int) end($partes)) + 1;
-        }
+        return DB::transaction(function () use ($ano) {
+            $prefix = "OS-{$ano}-";
 
-        return sprintf('OS-%d-%04d', $ano, $seq);
+            $maxSeq = static::where('codigo', 'like', $prefix.'%')
+                ->lockForUpdate()
+                ->get(['codigo'])
+                ->map(function ($row) {
+                    $partes = explode('-', $row->codigo);
+                    return (int) end($partes);
+                })
+                ->max();
+
+            $seq = ($maxSeq ?? 0) + 1;
+
+            return sprintf('OS-%d-%04d', $ano, $seq);
+        });
     }
 
     public function podeIniciar(): bool

@@ -308,8 +308,8 @@ class OrdemServicoController extends Controller
         // Se DomPDF estiver instalado, gera arquivo .pdf para download.
         // Caso contrário, exibe a view HTML imprimível (fallback).
         if (class_exists(\Barryvdh\DomPDF\Facade\Pdf::class)) {
-            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('os.pdf', $dados);
-            return $pdf->download("OS-{$os->codigo}.pdf");
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('os.pdf', $dados + ['pdfMode' => true]);
+            return $pdf->download("{$os->codigo}.pdf");
         }
 
         return view('os.pdf', $dados);
@@ -320,12 +320,32 @@ class OrdemServicoController extends Controller
     private function validarFormulario(Request $request): array
     {
         return $request->validate([
-            'profissional_id'   => ['required', 'exists:profissionais,id'],
-            'unidade_id'        => ['required', 'exists:unidades,id'],
-            'atividade_id'      => ['required', 'exists:atividades,id'],
-            'data_agendamento'  => ['nullable', 'date'],
-            'hora_agendamento'  => ['nullable'],
-            'observacoes'       => ['nullable', 'string'],
+            'profissional_id'   => [
+                'required',
+                // só facilitador ativo pode receber uma OS
+                \Illuminate\Validation\Rule::exists('profissionais', 'id')
+                    ->where(fn ($q) => $q->where('perfil', 'facilitador')->where('status', 'ativo')),
+            ],
+            'unidade_id'        => [
+                'required',
+                \Illuminate\Validation\Rule::exists('unidades', 'id')
+                    ->where(fn ($q) => $q->where('status', 'ativa')),
+            ],
+            'atividade_id'      => [
+                'required',
+                \Illuminate\Validation\Rule::exists('atividades', 'id')
+                    ->where(fn ($q) => $q->where('status', 'ativa')),
+            ],
+            'data_agendamento'  => ['required', 'date'],
+            'hora_agendamento'  => ['required', 'date_format:H:i'],
+            'observacoes'       => ['nullable', 'string', 'max:1000'],
+        ], [
+            'profissional_id.exists' => 'Selecione um facilitador ativo.',
+            'unidade_id.exists'      => 'Selecione uma unidade ativa.',
+            'atividade_id.exists'    => 'Selecione uma atividade ativa.',
+            'data_agendamento.required' => 'Informe a data do agendamento.',
+            'hora_agendamento.required' => 'Informe o horário do agendamento.',
+            'hora_agendamento.date_format' => 'Horário inválido (use HH:MM).',
         ]);
     }
 
