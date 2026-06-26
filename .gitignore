@@ -1,0 +1,12 @@
+/vendor
+/node_modules
+.env
+.env.backup
+.phpunit.result.cache
+docker-compose.override.yml
+/storage/*.key
+/public/hot
+/public/storage
+/public/build
+.DS_Store
+Thumbs.db

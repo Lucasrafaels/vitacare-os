@@ -1,0 +1,76 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vitacare_app
+    restart: unless-stopped
+    volumes:
+      - vitacare_app_code:/var/www/html
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: vitacare
+      DB_USERNAME: vitacare
+      DB_PASSWORD: vitacare_secret
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - vitacare_net
+
+  nginx:
+    image: nginx:alpine
+    container_name: vitacare_nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - vitacare_app_code:/var/www/html
+    depends_on:
+      - app
+    networks:
+      - vitacare_net
+
+  db:
+    image: mysql:8.0
+    container_name: vitacare_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: vitacare
+      MYSQL_USER: vitacare
+      MYSQL_PASSWORD: vitacare_secret
+      MYSQL_ROOT_PASSWORD: root_secret
+    volumes:
+      - vitacare_db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot_secret"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - vitacare_net
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: vitacare_phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: db
+      PMA_USER: vitacare
+      PMA_PASSWORD: vitacare_secret
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    networks:
+      - vitacare_net
+
+networks:
+  vitacare_net:
+    driver: bridge
+
+volumes:
+  vitacare_db_data:
+  vitacare_app_code:
